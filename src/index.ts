@@ -14,6 +14,6 @@ app.registerInitializer({
   }
 });
 
-app.renderComponent('croissant-shot', containerElement, null);
+app.renderComponent('croissant-hoops', containerElement, null);
 
 app.boot();

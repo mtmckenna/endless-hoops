@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   let ENV = {
-    modulePrefix: 'croissant-shot',
+    modulePrefix: 'croissant-hoops',
     environment: environment
   };
 
