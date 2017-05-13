@@ -64,8 +64,3 @@ interface Vector2D {
   x: number;
   y: number;
 }
-
-interface Dimensions {
-  width: number;
-  height: number;
-}
