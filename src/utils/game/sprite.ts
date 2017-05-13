@@ -1,6 +1,8 @@
 // Why does this file have to be under utils? v
 // https://github.com/glimmerjs/resolution-map-builder/issues/8
 
+import { Vector2D } from './interfaces';
+
 export abstract class Sprite {
   protected abstract base64EncodedImage: string;
   private vel: Vector2D = { x: 0, y: 0 };
@@ -58,9 +60,4 @@ interface Rectangle {
   right: number;
   top: number;
   bottom: number;
-}
-
-interface Vector2D {
-  x: number;
-  y: number;
 }

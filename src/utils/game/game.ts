@@ -1,11 +1,14 @@
 import { Ball } from './ball';
+import { InputSampler } from './input-sampler';
 
 export class Game {
   private ball: Ball;
+  private inputSampler: InputSampler;
 
   constructor(private context: CanvasRenderingContext2D) {
     this.fillBackground();
     this.ball = new Ball(context);
+    this.inputSampler = new InputSampler();
   }
 
   update() {
