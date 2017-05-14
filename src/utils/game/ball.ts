@@ -8,6 +8,7 @@ const AXIS_TO_DIMENSION_MAP = {
 
 const MAX_VELOCITY = 20;
 const MIN_VELOCITY = 2.0;
+const MIN_ROTATION = 0.1;
 
 export class Ball extends Sprite {
   launched: boolean = false;
@@ -30,6 +31,7 @@ export class Ball extends Sprite {
     this.launched = true;
     this.velocity.x = this.velocityForCoordinate(coordinates.x);
     this.velocity.y = -this.velocityForCoordinate(coordinates.y);
+    this.rotationSpeed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
   }
 
   private get subjectToGravity(): boolean {
@@ -48,6 +50,9 @@ export class Ball extends Sprite {
   private applyPhysics() {
     this.handleCollisions();
     this.applyGravity();
+    if (this.velocity.x === 0 && this.velocity.y === 0) {
+      this.rotationSpeed = 0.0;
+    }
   }
 
   private applyGravity() {
@@ -62,9 +67,15 @@ export class Ball extends Sprite {
 
       if (bounce) {
         this.velocity[axis] = -this.velocity[axis] * this.friction;
+        this.slowRotationAfterBounce(axis);
         this.stopIfMovingTooSlow(axis);
       }
     });
+  }
+
+  private slowRotationAfterBounce(axis) {
+    this.rotationSpeed *= this.friction;
+    if (axis === 'x') { this.rotationSpeed *= -1 }
   }
 
   private stopIfMovingTooSlow(axis) {

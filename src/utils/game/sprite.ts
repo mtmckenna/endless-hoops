@@ -8,6 +8,8 @@ export abstract class Sprite {
 
   protected abstract base64EncodedImage: string;
   protected velocity: Vector2D = { x: 0, y: 0 };
+  protected rotation: number = 0.0;
+  protected rotationSpeed: number = 0.0;
   protected get dimensions() {
     return { width: this.image.width, height: this.image.height };
   }
@@ -37,14 +39,24 @@ export abstract class Sprite {
   }
 
   update() {
-    this.position.x = this.position.x + this.velocity.x;
-    this.position.y = this.position.y + this.velocity.y;
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+    this.rotation += this.rotationSpeed;
   }
 
   draw() {
     const x = this.position.x;
     const y = this.position.y;
-    this.context.drawImage(this.image, x, y);
+
+    this.context.translate(x, y);
+    this.context.rotate(this.rotation);
+
+    this.context.drawImage(this.image,
+                           -this.dimensions.width / 2.0,
+                           -this.dimensions.height / 2.0);
+
+    this.context.rotate(-this.rotation);
+    this.context.translate(-x, -y);
   }
 
   private _image;
