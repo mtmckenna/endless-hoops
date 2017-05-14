@@ -64,6 +64,8 @@ export class InputSampler {
   }
 
   private move(event) {
+    // Disable iOS bounce-scroll thing
+    event.preventDefault();
     if (!this.touching) { return; }
 
     let currentCoordinates = this.coordinatesFromEvent(event);
