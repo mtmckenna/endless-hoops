@@ -1,48 +1,64 @@
 import { Ball } from './ball';
 import { InputSampler } from './input-sampler';
-import { Dimensions, InputSample } from './interfaces';
+import { Dimensions, InputSample, Vector2D } from './interfaces';
 
-const INITIAL_BALL_OFFSET: number = 25;
+const INITIAL_BALL_OFFSET: Vector2D = { x: 50, y: 100 };
 
 export class Game {
    constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
-    this.ball = new Ball(context, dimensions);
-    this.ball.position = {
-      x: INITIAL_BALL_OFFSET,
-      y: this.dimensions.height - INITIAL_BALL_OFFSET
-    };
     this.inputSampler = new InputSampler();
+    this.addNewBall();
   }
 
-  update() {
+  updateAndDraw() {
+    this.clearCanvas();
     let newInput: InputSample = this.inputSampler.sample();
+    this.launchBall(newInput);
 
-    this.launchBall(this.ball, newInput);
-    this.ball.update();
+    this.balls.forEach((ball) => {
+      ball.update();
+      ball.draw();
+    });
 
     this.input = newInput;
   }
 
-  draw () {
-    this.clearCanvas();
-    this.ball.draw();
-  }
-
   gameLoop() {
     window.requestAnimationFrame(() => { this.gameLoop(); });
-    this.update();
-    this.draw();
+    this.updateAndDraw();
   }
 
   private ball: Ball;
+  private balls: Array<Ball> = [];
   private inputSampler: InputSampler;
   private input: InputSample = InputSampler.defaultInput;
 
-  private launchBall(ball: Ball, newInput: InputSample) {
+  private get unlaunchedBall() {
+    let ball = this.balls[this.balls.length - 1];
+
+    if (ball.launched) {
+      return null;
+    }
+
+    return ball;
+  }
+
+  private launchBall(newInput: InputSample) {
     if (this.input.touching && !newInput.touching) {
       let coordinates = newInput.relativeCoordinates;
-      ball.launch(coordinates);
+      this.unlaunchedBall.launch(coordinates);
+      this.addNewBall();
     }
+  }
+
+  private addNewBall() {
+    let ball: Ball = new Ball(this.context, this.dimensions);
+    ball.position = {
+      x: INITIAL_BALL_OFFSET.x,
+      y: this.dimensions.height - INITIAL_BALL_OFFSET.y
+    };
+
+    this.balls.push(ball);
   }
 
   private clearCanvas() {
