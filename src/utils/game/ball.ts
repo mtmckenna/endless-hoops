@@ -15,15 +15,8 @@ export class Ball extends Sprite {
 
   protected base64EncodedImage: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAABxpRE9UAAAAAgAAAAAAAAAIAAAAKAAAAAgAAAAIAAAAkKa6ghYAAABcSURBVDgRpI1hCkAhCIO9T2fvgP3qtcpaw+BBgTjn/DILXsmpotqq96mDpFh+6J0B5MnVHtdvFA69fTLV7aCtDwDPB8QB6AjdSnKDwaZqgNTjuRPYUP0LgNBD2QcAAP//nwulkAAAAFlJREFUY/i5Vvs/LszAwIBTDqQHKM/AgEszVAFhA9ANAfJBJmPFyJaB9MEBTAIogGIjPj5cMxIDRTMuL4AMRdKDyoS5BEaDFMPYMBpVBw4ekmK4ATiUUi4MAIcSmN9RakHzAAAAAElFTkSuQmCC';
 
-  private gravity: number = 1.0;
-  private friction: number = 0.75;
-  private dead: boolean = false;
-
   update() {
-    if (this.subjectToGravity) {
-      this.applyPhysics();
-    }
-
+    if (this.subjectToGravity) { this.applyPhysics(); }
     super.update();
   }
 
@@ -33,6 +26,10 @@ export class Ball extends Sprite {
     this.velocity.y = -this.velocityForCoordinate(coordinates.y, 'height');
     this.rotationSpeed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
   }
+
+  private gravity: number = 1.0;
+  private friction: number = 0.75;
+  private dead: boolean = false;
 
   private get subjectToGravity(): boolean {
     return this.launched && !this.dead;
@@ -88,7 +85,7 @@ export class Ball extends Sprite {
     return speed > -MIN_VELOCITY && speed < MIN_VELOCITY;
   }
 
-  // The 0,0 point is in the top left corner of the screen
+  // The 0, 0 point is in the top left corner of the screen
   private limitPositionToWorldBounds(axis): boolean {
     let leaving: boolean = false;
 
@@ -102,9 +99,9 @@ export class Ball extends Sprite {
       currentPosition = maxPosition;
     }
 
-    if (currentPosition < 0) {
+    if (currentPosition < imageDimension) {
       leaving = true;
-      currentPosition = 0;
+      currentPosition = imageDimension;
     }
 
     this.position[axis] = currentPosition;

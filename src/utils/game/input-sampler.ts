@@ -31,7 +31,7 @@ export class InputSampler {
     }
   }
 
-  private touching: boolean;
+  private touching: boolean = false;
   private startCoordinates: Vector2D = { x: 0, y: 0 };
   private relativeCoordinates: Vector2D = { x: 0, y: 0 };
 

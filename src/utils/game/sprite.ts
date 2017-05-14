@@ -5,17 +5,17 @@ import { Vector2D, Dimensions } from './interfaces';
 
 export abstract class Sprite {
   public position: Vector2D = { x: 0, y: 0 };
+  public velocity: Vector2D = { x: 0, y: 0 };
 
   protected abstract base64EncodedImage: string;
-  protected velocity: Vector2D = { x: 0, y: 0 };
   protected rotation: number = 0.0;
   protected rotationSpeed: number = 0.0;
   protected get dimensions() {
     return { width: this.image.width, height: this.image.height };
   }
 
-  constructor(private context: CanvasRenderingContext2D,
-              protected  worldDimensions: Dimensions) {}
+  constructor(protected worldDimensions: Dimensions,
+              private context?: CanvasRenderingContext2D) {}
 
   intersects(anotherSprite) {
     let r1: Rectangle = {
@@ -48,15 +48,15 @@ export abstract class Sprite {
     const x = this.position.x;
     const y = this.position.y;
 
+    this.context.save();
+
     this.context.translate(x, y);
     this.context.rotate(this.rotation);
-
     this.context.drawImage(this.image,
                            -this.dimensions.width / 2.0,
                            -this.dimensions.height / 2.0);
 
-    this.context.rotate(-this.rotation);
-    this.context.translate(-x, -y);
+    this.context.restore();
   }
 
   private _image;
