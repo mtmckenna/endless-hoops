@@ -6,8 +6,8 @@ const AXIS_TO_DIMENSION_MAP = {
   'y': 'height'
 };
 
-const MAX_VELOCITY = 20;
-const MIN_VELOCITY = 2.0;
+const MAX_VELOCITY = 30.0;
+const MIN_VELOCITY = 3.0;
 const MIN_ROTATION = 0.1;
 
 export class Ball extends Sprite {
@@ -29,8 +29,8 @@ export class Ball extends Sprite {
 
   launch(coordinates: Vector2D) {
     this.launched = true;
-    this.velocity.x = this.velocityForCoordinate(coordinates.x);
-    this.velocity.y = -this.velocityForCoordinate(coordinates.y);
+    this.velocity.x = this.velocityForCoordinate(coordinates.x, 'width');
+    this.velocity.y = -this.velocityForCoordinate(coordinates.y, 'height');
     this.rotationSpeed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
   }
 
@@ -43,8 +43,8 @@ export class Ball extends Sprite {
   }
 
   // Keep the velocity between -MAX_VEL and MAX_VEL
-  private velocityForCoordinate(coordinate): number {
-    return Math.min(Math.max(coordinate, -MAX_VELOCITY), MAX_VELOCITY);
+  private velocityForCoordinate(coordinate, dimension): number {
+    return MAX_VELOCITY * coordinate / this.worldDimensions[dimension];
   }
 
   private applyPhysics() {
