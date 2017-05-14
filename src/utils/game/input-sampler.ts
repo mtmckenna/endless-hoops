@@ -1,4 +1,4 @@
-import { Vector2D } from './interfaces';
+import { InputSample, Vector2D } from './interfaces';
 
 const EVENTS_ARRAY = [
   'mousedown', 'mouseup', 'mousemove',
@@ -15,14 +15,19 @@ const EVENTS_CALLBACK_MAP = {
 }
 
 export class InputSampler {
+  public static defaultInput: InputSample = {
+    touching: false,
+    relativeCoordinates: { x: 0, y: 0 }
+  };
+
   constructor() {
     this.addEventListeners();
   }
 
-  sample(): Sample {
+  sample(): InputSample {
     return {
-      touching: this.touching,
-      relativeCoordinates: this.relativeCoordinates
+      touching: this.touching || false,
+      relativeCoordinates: this.relativeCoordinates || { x: 0, y: 0 }
     }
   }
 
@@ -69,14 +74,5 @@ export class InputSampler {
     };
 
     this.relativeCoordinates = newRelativeCoordinates;
-  }
-}
-
-// "touching" means both touching and mousedown
-interface Sample {
-  touching: boolean,
-  relativeCoordinates: {
-    x: number,
-    y: number
   }
 }

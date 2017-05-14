@@ -1,21 +1,30 @@
 import { Ball } from './ball';
 import { InputSampler } from './input-sampler';
+import { Dimensions, InputSample } from './interfaces';
+
+const INITIAL_BALL_OFFSET: number = 25;
 
 export class Game {
-  private ball: Ball;
-  private inputSampler: InputSampler;
-
-  constructor(private context: CanvasRenderingContext2D) {
-    this.fillBackground();
-    this.ball = new Ball(context);
+   constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
+    this.ball = new Ball(context, dimensions);
+    this.ball.position = {
+      x: INITIAL_BALL_OFFSET,
+      y: this.dimensions.height - INITIAL_BALL_OFFSET
+    };
     this.inputSampler = new InputSampler();
   }
 
   update() {
+    let newInput: InputSample = this.inputSampler.sample();
+
+    this.launchBall(this.ball, newInput);
     this.ball.update();
+
+    this.input = newInput;
   }
 
   draw () {
+    this.clearCanvas();
     this.ball.draw();
   }
 
@@ -25,20 +34,20 @@ export class Game {
     this.draw();
   }
 
-  private get dimensions() {
-    return {
-      width: this.context.canvas.clientWidth,
-      height: this.context.canvas.clientHeight
-    };
+  private ball: Ball;
+  private inputSampler: InputSampler;
+  private input: InputSample = InputSampler.defaultInput;
+
+  private launchBall(ball: Ball, newInput: InputSample) {
+    if (this.input.touching && !newInput.touching) {
+      let coordinates = newInput.relativeCoordinates;
+      ball.launch(coordinates);
+    }
   }
 
-  private fillBackground() {
-    this.context.beginPath();
-    this.context.rect(0,
-                      0,
-                      this.dimensions.width,
-                      this.dimensions.height);
-    this.context.fillStyle = '#c4ebff';
-    this.context.fill();
+  private clearCanvas() {
+    let width = this.dimensions.width;
+    let height = this.dimensions.height;
+    this.context.clearRect(0, 0, width, height);
   }
 }
