@@ -105,6 +105,7 @@ export class Game {
     if (scored) {
       this.score += 1;
       this.scoreCallback(this.score);
+      this.addNewHoopToGame();
     } else {
       ball.bounce(this.hoop);
     }
@@ -116,7 +117,6 @@ export class Game {
   }
 
   private addNewHoopToGame() {
-    if (this.hoop) { return; }
     this.hoop = new Hoop(this.dimensions, this.context);
   }
 
