@@ -8,6 +8,13 @@ export interface Dimensions {
   height: number;
 }
 
+export interface Rectangle {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
 // "touching" means both touching and mousedown
 export interface InputSample {
   touching: boolean,

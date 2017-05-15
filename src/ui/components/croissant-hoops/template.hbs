@@ -1,4 +1,11 @@
-<div class="score">Score: {{score}}</div>
+<div class="ui">
+  <div class="score">Score: {{score}}</div>
+  <br />
+  <label for="gravity-slider">Gravity:</label>
+  <input type="range" name="gravity-slider" id="gravity-slider"
+                                     min="0.1" max="0.7" step=".01" value="0.3"
+                                     oninput={{action updateGravity}} />
+</div>
 <canvas height={{dimensions.height}} width={{dimensions.width}} id="game-canvas">
   Your browser doesn't support HTML5. :(
 </canvas>

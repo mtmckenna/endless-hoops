@@ -16,6 +16,10 @@ export default class CroissantShot extends Component {
     this.game.gameLoop();
   }
 
+  updateGravity(event) {
+    this.game.gravity = parseFloat(event.target.value);
+  }
+
   private get canvas() {
     return document.getElementById('game-canvas') as HTMLCanvasElement;
   }

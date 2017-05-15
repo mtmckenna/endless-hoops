@@ -1,44 +1,56 @@
 // Why does this file have to be under utils? v
 // https://github.com/glimmerjs/resolution-map-builder/issues/8
 
-import { Vector2D, Dimensions } from './interfaces';
+import { Vector2D, Dimensions, Rectangle } from './interfaces';
+
+const AXIS_TO_RECTANGLE_MAP = {
+  x: { min: 'left', max: 'right' },
+  y: { min: 'top', max: 'bottom' }
+};
 
 export abstract class Sprite {
   public position: Vector2D = { x: 0, y: 0 };
   public velocity: Vector2D = { x: 0, y: 0 };
+  public context: CanvasRenderingContext2D;
 
   protected abstract base64EncodedImage: string;
   protected rotation: number = 0.0;
   protected rotationSpeed: number = 0.0;
+  protected worldDimensions: Dimensions;
+
   protected get dimensions() {
     return { width: this.image.width, height: this.image.height };
   }
 
-  constructor(protected worldDimensions: Dimensions,
-              private context?: CanvasRenderingContext2D) {}
+  constructor(worldDimensions: Dimensions, context?: CanvasRenderingContext2D) {
+    this.worldDimensions = worldDimensions;
+    this.context = context;
+  }
 
   intersects(anotherSprite) {
-    let r1: Rectangle = {
-      left: this.position.x,
-      right: this.position.x + this.dimensions.width,
-      top: this.position.y,
-      bottom: this.position.y + this.dimensions.height
-    }
+    let r1: Rectangle = this.hitBox;
+    let r2: Rectangle = anotherSprite.hitBox;
+    let xOverlap: boolean = this.axisOverlaps(r1, r2, 'x');
+    let yOverlap: boolean = this.axisOverlaps(r1, r2, 'y');
 
-    let r2: Rectangle = {
-      left: anotherSprite.position.x,
-      right: anotherSprite.position.x + anotherSprite.dimensions.width,
-      top: anotherSprite.position.y,
-      bottom: anotherSprite.position.y + anotherSprite.dimensions.height
-    };
+    return xOverlap && yOverlap;
+  }
 
-    return !(r2.left > r1.right ||
-             r2.right < r1.left ||
-             r2.top > r1.bottom ||
-             r2.bottom < r1.top);
+  collidedWithSpriteOnAxis(anotherSprite, axis) {
+    let r1: Rectangle = this.hitBox;
+    let r2: Rectangle = anotherSprite.hitBox;
+
+    let minKey = AXIS_TO_RECTANGLE_MAP[axis]['min'];
+    let maxKey = AXIS_TO_RECTANGLE_MAP[axis]['max'];
+
+    r1[minKey] = this.oldHitBox[minKey];
+    r1[maxKey] = this.oldHitBox[maxKey];
+
+    return this.axisOverlaps(r1, r2, axis);
   }
 
   update() {
+    this.oldHitBox = this.hitBox;
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
     this.rotation += this.rotationSpeed;
@@ -59,18 +71,34 @@ export abstract class Sprite {
     this.context.restore();
   }
 
+  protected get hitBox(): Rectangle {
+    return {
+      left: this.position.x,
+      right: this.position.x + this.dimensions.width,
+      top: this.position.y,
+      bottom: this.position.y + this.dimensions.height
+    };
+  }
+
+  private oldHitBox: Rectangle = { left: 0, right: 0, top: 0, bottom: 0 };
   private _image;
+
   private get image() {
     if (this._image) { return this._image; }
     this._image = new Image();
     this._image.src = this.base64EncodedImage;
     return this._image;
   }
+
+  private axisOverlaps(r1, r2, axis) {
+    let maxKey = AXIS_TO_RECTANGLE_MAP[axis]['max'];
+    let minKey = AXIS_TO_RECTANGLE_MAP[axis]['min'];
+    let r1Max: number = r1[maxKey];
+    let r1Min: number = r1[minKey];
+    let r2Max: number = r2[maxKey];
+    let r2Min: number = r2[minKey];
+
+    return r2Min <= r1Max && r1Min <= r2Max;
+  }
 }
 
-interface Rectangle {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}

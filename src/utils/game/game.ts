@@ -1,16 +1,20 @@
 import { Ball } from './ball';
+import { Hoop } from './hoop';
 import { InputSampler } from './input-sampler';
 import { Dimensions, InputSample, Vector2D } from './interfaces';
 
-const INITIAL_BALL_OFFSET: Vector2D = { x: 50, y: 100 };
 const ARC_DASH_LENGTH = 5;
 const ARC_DASH_SPACE_LENGTH = 15;
 const ARC_DASH_ARRAY = [ARC_DASH_LENGTH, ARC_DASH_SPACE_LENGTH];
 
 export class Game {
-   constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
+  static readonly INITIAL_BALL_OFFSET: Vector2D = { x: 50, y: 100 };
+  gravity: number = 0.3;
+
+  constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
     this.inputSampler = new InputSampler();
     this.addNewBallToGame();
+    this.addNewHoopToGame();
   }
 
   gameLoop() {
@@ -20,37 +24,41 @@ export class Game {
 
   private ball: Ball;
   private balls: Array<Ball> = [];
+  private hoop: Hoop;
   private inputSampler: InputSampler;
   private input: InputSample = InputSampler.defaultInput;
 
   private get unlaunchedBall() {
     let ball = this.balls[this.balls.length - 1];
-
-    if (ball.launched) {
-      return null;
-    }
-
+    if (ball.launched) { return null; }
     return ball;
   }
 
   private get newBall(): Ball {
     let ball: Ball = new Ball(this.dimensions, this.context);
     ball.position = {
-      x: INITIAL_BALL_OFFSET.x,
-      y: this.dimensions.height - INITIAL_BALL_OFFSET.y
+      x: Game.INITIAL_BALL_OFFSET.x,
+      y: this.dimensions.height - Game.INITIAL_BALL_OFFSET.y
     };
+
+    ball.gravity = this.gravity;
 
     return ball;
   }
 
   private updateAndDraw() {
     this.clearCanvas();
+    this.hoop.draw();
+
     let newInput: InputSample = this.inputSampler.sample();
     this.launchBall(newInput);
     this.drawArc(newInput);
 
     this.balls.forEach((ball) => {
+      ball.gravity = this.gravity;
       ball.update();
+      let hit: boolean = ball.intersects(this.hoop);
+      if (hit) { this.bounceOrScore(ball); }
       ball.draw();
     });
 
@@ -87,9 +95,18 @@ export class Game {
     }
   }
 
+  private bounceOrScore(ball) {
+    ball.bounce(this.hoop);
+  }
+
   private addNewBallToGame() {
     let ball: Ball = this.newBall;
     this.balls.push(ball);
+  }
+
+  private addNewHoopToGame() {
+    if (this.hoop) { return; }
+    this.hoop = new Hoop(this.dimensions, this.context);
   }
 
   private clearCanvas() {

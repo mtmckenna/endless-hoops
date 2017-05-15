@@ -36,9 +36,10 @@ export class InputSampler {
   private relativeCoordinates: Vector2D = { x: 0, y: 0 };
 
   private addEventListeners() {
+  let element = document.getElementById('game-canvas');
     EVENTS_ARRAY.forEach((eventName) => {
       let callback = this[EVENTS_CALLBACK_MAP[eventName]].bind(this);
-      window.addEventListener(eventName, callback);
+      element.addEventListener(eventName, callback);
     });
   }
 
