@@ -12,7 +12,7 @@ export class Game {
   gravity: number = 0.3;
 
   constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
-    this.inputSampler = new InputSampler();
+    this.inputSampler = new InputSampler(context);
     this.addNewBallToGame();
     this.addNewHoopToGame();
   }

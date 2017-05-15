@@ -20,7 +20,8 @@ export class InputSampler {
     relativeCoordinates: { x: 0, y: 0 }
   };
 
-  constructor() {
+  constructor(private context: CanvasRenderingContext2D) {
+    this.canvas = context.canvas;
     this.addEventListeners();
   }
 
@@ -34,12 +35,12 @@ export class InputSampler {
   private touching: boolean = false;
   private startCoordinates: Vector2D = { x: 0, y: 0 };
   private relativeCoordinates: Vector2D = { x: 0, y: 0 };
+  private canvas: HTMLCanvasElement;
 
   private addEventListeners() {
-  let element = document.getElementById('game-canvas');
     EVENTS_ARRAY.forEach((eventName) => {
       let callback = this[EVENTS_CALLBACK_MAP[eventName]].bind(this);
-      element.addEventListener(eventName, callback);
+      this.canvas.addEventListener(eventName, callback);
     });
   }
 
