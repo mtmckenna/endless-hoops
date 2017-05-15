@@ -11,7 +11,7 @@ export class Game {
   static readonly INITIAL_BALL_OFFSET: Vector2D = { x: 50, y: 100 };
   gravity: number = 0.3;
 
-  constructor(private context: CanvasRenderingContext2D, private dimensions: Dimensions) {
+  constructor(private context: CanvasRenderingContext2D, public dimensions: Dimensions) {
     this.inputSampler = new InputSampler(context);
     this.addNewBallToGame();
     this.addNewHoopToGame();
