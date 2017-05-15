@@ -13,6 +13,15 @@ export abstract class Sprite {
   public velocity: Vector2D = { x: 0, y: 0 };
   public context: CanvasRenderingContext2D;
 
+  get hitBox(): Rectangle {
+    return {
+      left: this.position.x,
+      right: this.position.x + this.dimensions.width,
+      top: this.position.y,
+      bottom: this.position.y + this.dimensions.height
+    };
+  }
+
   protected abstract base64EncodedImage: string;
   protected rotation: number = 0.0;
   protected rotationSpeed: number = 0.0;
@@ -69,15 +78,6 @@ export abstract class Sprite {
                            -this.dimensions.height / 2.0);
 
     this.context.restore();
-  }
-
-  protected get hitBox(): Rectangle {
-    return {
-      left: this.position.x,
-      right: this.position.x + this.dimensions.width,
-      top: this.position.y,
-      bottom: this.position.y + this.dimensions.height
-    };
   }
 
   private oldHitBox: Rectangle = { left: 0, right: 0, top: 0, bottom: 0 };

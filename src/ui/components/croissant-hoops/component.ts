@@ -10,16 +10,32 @@ export default class CroissantShot extends Component {
     width:  320
   };
 
-  private score: number = 0;
+  @tracked
+  score: number = 0;
+
   private game: Game;
 
   didInsertElement() {
-    this.game = new Game(this.context, this.dimensions);
     let screenDimensions: Dimensions = { width: window.innerWidth, height: window.innerHeight };
     this.updateDimensions(screenDimensions);
     this.canvas.width = this.dimensions.width;
+    this.game = new Game(this.context, this.dimensions);
+    this.game.scoreCallback = (newScore) => { this.scoreCallback(newScore); };
     this.game.gameLoop();
     window.addEventListener('resize', (event) => { this.handleResizeEvent(event); });
+  }
+
+  scoreCallback(newScore: number) {
+    this.score = newScore;
+    this.pulseScore();
+  }
+
+  pulseScore() {
+    let element = document.getElementById('score');
+    element.classList.remove('pulse');
+    setTimeout(function() {
+      element.classList.add('pulse');
+    }, 0);
   }
 
   handleResizeEvent(event) {
@@ -27,6 +43,7 @@ export default class CroissantShot extends Component {
     let innerHeight: number = Math.floor(event.target.innerHeight);
     let screenDimensions = { width: innerWidth, height: innerHeight };
     this.updateDimensions(screenDimensions);
+    this.game.dimensions = this.dimensions;
   }
 
   updateDimensions(screenDimensions: Dimensions) {
@@ -38,8 +55,6 @@ export default class CroissantShot extends Component {
       height: this.dimensions.height,
       width: width
     };
-
-    this.game.dimensions = this.dimensions;
   }
 
   updateGravity(event) {

@@ -22,3 +22,21 @@ html, body, #app {
   height: 100%;
   image-rendering: pixelated;
 }
+
+.pulse {
+  animation-name: pulse-keyframes;
+  animation-duration: 0.75s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes pulse-keyframes {
+  0% {
+    transform: scale(1.0);
+  }
+  50% {
+    transform: scale(5.0);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}

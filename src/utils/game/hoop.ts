@@ -22,7 +22,7 @@ export class Hoop extends Sprite {
     };
   }
 
-  protected get hitBox(): Rectangle {
+  get hitBox(): Rectangle {
     return {
       left: this.position.x,
       right: this.position.x + this.dimensions.width,

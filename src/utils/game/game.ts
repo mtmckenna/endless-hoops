@@ -10,6 +10,8 @@ const ARC_DASH_ARRAY = [ARC_DASH_LENGTH, ARC_DASH_SPACE_LENGTH];
 export class Game {
   static readonly INITIAL_BALL_OFFSET: Vector2D = { x: 50, y: 100 };
   gravity: number = 0.3;
+  score: number = 0;
+  scoreCallback = function(newScore) { console.warn('You must implement scoreCallback'); }
 
   constructor(private context: CanvasRenderingContext2D, public dimensions: Dimensions) {
     this.inputSampler = new InputSampler(context);
@@ -58,7 +60,7 @@ export class Game {
       ball.gravity = this.gravity;
       ball.update();
       let hit: boolean = ball.intersects(this.hoop);
-      if (hit) { this.bounceOrScore(ball); }
+      if (hit) { this.scoreOrBounce(ball); }
       ball.draw();
     });
 
@@ -95,8 +97,17 @@ export class Game {
     }
   }
 
-  private bounceOrScore(ball) {
-    ball.bounce(this.hoop);
+  private scoreOrBounce(ball) {
+    if (ball.alreadyScored) { return; }
+
+    let scored = ball.score(this.hoop);
+
+    if (scored) {
+      this.score += 1;
+      this.scoreCallback(this.score);
+    } else {
+      ball.bounce(this.hoop);
+    }
   }
 
   private addNewBallToGame() {
