@@ -45,19 +45,6 @@ export abstract class Sprite {
     return xOverlap && yOverlap;
   }
 
-  collidedWithSpriteOnAxis(anotherSprite, axis) {
-    let r1: Rectangle = this.hitBox;
-    let r2: Rectangle = anotherSprite.hitBox;
-
-    let minKey = AXIS_TO_RECTANGLE_MAP[axis]['min'];
-    let maxKey = AXIS_TO_RECTANGLE_MAP[axis]['max'];
-
-    r1[minKey] = this.oldHitBox[minKey];
-    r1[maxKey] = this.oldHitBox[maxKey];
-
-    return this.axisOverlaps(r1, r2, axis);
-  }
-
   update() {
     this.oldHitBox = this.hitBox;
     this.position.x += this.velocity.x;

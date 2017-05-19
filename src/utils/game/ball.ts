@@ -47,7 +47,6 @@ export class Ball extends Sprite {
 
   bounce(anotherSprite: Sprite) {
     ['y', 'x'].forEach((axis) => {
-      this.collidedWithSpriteOnAxis(anotherSprite, axis);
       this.velocity[axis] = -this.velocity[axis];
     });
   }
