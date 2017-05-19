@@ -20,7 +20,7 @@ export default class CroissantShot extends Component {
     this.updateDimensions(screenDimensions);
     this.canvas.width = this.dimensions.width;
     this.game = new Game(this.context, this.dimensions);
-    this.game.scoreCallback = (newScore) => { this.scoreCallback(newScore); };
+    this.game.scoreCallback = this.scoreCallback.bind(this);
     this.game.gameLoop();
     window.addEventListener('resize', (event) => { this.handleResizeEvent(event); });
   }
