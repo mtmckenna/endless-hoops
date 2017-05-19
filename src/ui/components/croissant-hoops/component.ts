@@ -14,6 +14,7 @@ export default class CroissantShot extends Component {
   score: number = 0;
 
   private game: Game;
+  private boundResizeEventHandler;
 
   didInsertElement() {
     let screenDimensions: Dimensions = { width: window.innerWidth, height: window.innerHeight };
@@ -21,8 +22,14 @@ export default class CroissantShot extends Component {
     this.canvas.width = this.dimensions.width;
     this.game = new Game(this.context, this.dimensions);
     this.game.scoreCallback = this.scoreCallback.bind(this);
+    this.boundResizeEventHandler = this.resizeEventHandler.bind(this);
     this.game.gameLoop();
-    window.addEventListener('resize', (event) => { this.handleResizeEvent(event); });
+
+    window.addEventListener('resize',  this.boundResizeEventHandler);
+  }
+
+  willDestroy() {
+    window.removeEventListener('resize', this.boundResizeEventHandler);
   }
 
   scoreCallback(newScore: number) {
@@ -38,7 +45,7 @@ export default class CroissantShot extends Component {
     }, 0);
   }
 
-  handleResizeEvent(event) {
+  resizeEventHandler(event) {
     let innerWidth: number = Math.floor(event.target.innerWidth);
     let innerHeight: number = Math.floor(event.target.innerHeight);
     let screenDimensions = { width: innerWidth, height: innerHeight };
