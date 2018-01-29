@@ -14,6 +14,6 @@ app.registerInitializer({
   }
 });
 
-app.renderComponent('croissant-hoops', containerElement, null);
+app.renderComponent('endless-hoops', containerElement, null);
 
 app.boot();

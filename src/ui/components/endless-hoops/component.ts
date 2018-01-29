@@ -2,7 +2,7 @@ import Component, { tracked } from '@glimmer/component';
 import { Game } from '../../../utils/game/game';
 import { Dimensions } from '../../../utils/game/interfaces';
 
-export default class CroissantShot extends Component {
+export default class EndlessHoops extends Component {
 
   @tracked
   dimensions : Dimensions = {
